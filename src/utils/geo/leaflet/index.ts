@@ -4,6 +4,8 @@ import L from 'leaflet';
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
 
+import { initLayerToAdd } from './leyers';
+
 interface tileLayer {
   tileUrl: string;
   options?: TileLayerOptions;
@@ -36,6 +38,9 @@ export const createMap = (el: any, options: MapOptions) => {
   });
   const hash = behaviorHash({ map });
   hash();
+  // 不要改变setMap的顺序，后面的步骤依赖此步骤
   mapStore.setMap(map);
+
+  initLayerToAdd();
   return map;
 };
