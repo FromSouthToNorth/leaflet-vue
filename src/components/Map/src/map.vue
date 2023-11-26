@@ -17,6 +17,7 @@
       zoom: 6,
       center: [0, 0],
       minZoom: 3,
+      maxZoom: 26,
     });
   });
 </script>

@@ -1,10 +1,20 @@
-import type { MapOptions, TileLayerOptions } from 'leaflet';
+import { GeoJsonObject } from 'geojson';
+import type { LatLngBoundsExpression, MapOptions, TileLayerOptions } from 'leaflet';
 import L from 'leaflet';
 
+import { basePoint, layerData, lineData, yhxmcBasePoint, yhxmcData } from '@/data';
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
 
-import { initLayerToAdd } from './leyers';
+import {
+  addLayers,
+  imageOverlay,
+  initLayerToAdd,
+  latlng,
+  marker,
+  markercluster,
+  rectangle,
+} from './leyers';
 
 interface tileLayer {
   tileUrl: string;
@@ -12,7 +22,7 @@ interface tileLayer {
 }
 const accessToken =
   'pk.eyJ1IjoiaHlzZSIsImEiOiJjbGVwcWg0bDkwZXNlM3pvNXNleWUzcTQ0In0.S3VTf9vqYTAAF725ukcDjQ';
-const tileLayers: Array<tileLayer> = [
+export const tileLayers: Array<tileLayer> = [
   {
     tileUrl:
       'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg?access_token={accessToken}',
@@ -42,5 +52,47 @@ export const createMap = (el: any, options: MapOptions) => {
   mapStore.setMap(map);
 
   initLayerToAdd();
+
+  yhxmcData.forEach((e) => {
+    const key = `yhxmc-rectangle-${e.key}`;
+    const r = rectangle(e.latlng as LatLngBoundsExpression, {
+      key,
+      clipPath: true,
+      fill: false,
+      weight: 30,
+      opacity: 0.4,
+    }).bindPopup(`${e.name}`);
+    addLayers(r);
+    if (e.options.url) {
+      addLayers(imageOverlay(e.options.url, e.latlng as LatLngBoundsExpression));
+    }
+  });
+
+  layerData.forEach((e) => {
+    const key = `hlh-rectangle-${e.key}`;
+    const r = rectangle(e.latlng as LatLngBoundsExpression, {
+      key,
+      clipPath: true,
+      fill: false,
+      weight: 30,
+      opacity: 0.4,
+    }).bindPopup(`${e.name}`);
+    addLayers(r);
+    if (e.options.url) {
+      addLayers(imageOverlay(e.options.url, e.latlng as LatLngBoundsExpression));
+    }
+  });
+
+  const markers = [...yhxmcBasePoint, ...basePoint].map((e) => {
+    return marker(latlng(e.lat, e.lng))
+      .bindPopup(e.devicePosition)
+      .bindTooltip(e.deviceId, { permanent: true });
+  });
+
+  addLayers(markers, 'markercluster');
+
+  const line = lineData.map((e) => {
+    return addLayers(e as GeoJsonObject, 'geoJSON');
+  });
   return map;
 };
