@@ -10,7 +10,6 @@ import L, {
   Layer,
   LayerGroup,
   LeafletEvent,
-  MarkerOptions,
   Point,
   Polygon,
   PolylineOptions,
@@ -136,10 +135,6 @@ export const imageOverlay = (
   options?: ImageOverlayOptions,
 ) => {
   return L.imageOverlay(imageUrl, imageBounds, options);
-};
-
-export const marker = (latlng: LatLngExpression, options?: MarkerOptions) => {
-  return L.marker(latlng, options);
 };
 
 export const latlng = (lat: number, lng: number) => {

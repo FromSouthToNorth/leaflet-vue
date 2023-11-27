@@ -1,20 +1,21 @@
 import { GeoJsonObject } from 'geojson';
-import type { LatLngBoundsExpression, MapOptions, TileLayerOptions } from 'leaflet';
+import type { LatLngBoundsExpression, Layer, MapOptions, TileLayerOptions } from 'leaflet';
 import L from 'leaflet';
 
-import { basePoint, layerData, lineData, yhxmcBasePoint, yhxmcData } from '@/data';
+import {
+  basePoint,
+  layerData,
+  lineData,
+  scgmkBasePoint,
+  scgmkSafetySensor,
+  yhxmcBasePoint,
+  yhxmcData,
+} from '@/data';
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
 
-import {
-  addLayers,
-  imageOverlay,
-  initLayerToAdd,
-  latlng,
-  marker,
-  markercluster,
-  rectangle,
-} from './leyers';
+import { addLayers, imageOverlay, initLayerToAdd, latlng, rectangle } from './layers';
+import { deviceMarker, marker } from './layers/marker';
 
 interface tileLayer {
   tileUrl: string;
@@ -59,7 +60,7 @@ export const createMap = (el: any, options: MapOptions) => {
       key,
       clipPath: true,
       fill: false,
-      weight: 30,
+      weight: 60,
       opacity: 0.4,
     }).bindPopup(`${e.name}`);
     addLayers(r);
@@ -74,7 +75,7 @@ export const createMap = (el: any, options: MapOptions) => {
       key,
       clipPath: true,
       fill: false,
-      weight: 30,
+      weight: 60,
       opacity: 0.4,
     }).bindPopup(`${e.name}`);
     addLayers(r);
@@ -84,9 +85,7 @@ export const createMap = (el: any, options: MapOptions) => {
   });
 
   const markers = [...yhxmcBasePoint, ...basePoint].map((e) => {
-    return marker(latlng(e.lat, e.lng))
-      .bindPopup(e.devicePosition)
-      .bindTooltip(e.deviceId, { permanent: true });
+    return deviceMarker(e);
   });
 
   addLayers(markers, 'markercluster');
@@ -94,5 +93,21 @@ export const createMap = (el: any, options: MapOptions) => {
   const line = lineData.map((e) => {
     return addLayers(e as GeoJsonObject, 'geoJSON');
   });
+
+  const _scgmkMarkers: Layer[] = [];
+  for (const _marker of scgmkSafetySensor) {
+    if (_marker.lat && _marker.lng) {
+      _scgmkMarkers.push(deviceMarker(_marker));
+    }
+  }
+  for (const _marker of scgmkBasePoint) {
+    if (_marker.lat && _marker.lng) {
+      if (_marker.lat && _marker.lng) {
+        _scgmkMarkers.push(deviceMarker(_marker));
+      }
+    }
+  }
+
+  addLayers(_scgmkMarkers, 'markercluster');
   return map;
 };
