@@ -20,7 +20,7 @@ export const markerIconStyle: MarkerIconStyle[] = [
   {
     systemId: 120,
     divIcon: divIcon({
-      className: 'sensorPoint',
+      className: 'Point sensorPoint',
       html: `<img src="${sensor}">`,
       iconSize: [18, 18],
     }),
@@ -28,7 +28,7 @@ export const markerIconStyle: MarkerIconStyle[] = [
   {
     systemId: 140,
     divIcon: divIcon({
-      className: 'baseStationPoint',
+      className: 'Point baseStationPoint',
       html: `<img src="${baseStation}">`,
       iconSize: [18, 18],
     }),

@@ -14,8 +14,9 @@ import {
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
 
-import { addLayers, imageOverlay, initLayerToAdd, latlng, rectangle } from './layers';
-import { deviceMarker, marker } from './layers/marker';
+import { addLayers, initLayerToAdd } from './layers';
+import { deviceMarker } from './layers/marker';
+import { imageOverlay, rectangle } from './layers/polygon';
 
 interface tileLayer {
   tileUrl: string;
