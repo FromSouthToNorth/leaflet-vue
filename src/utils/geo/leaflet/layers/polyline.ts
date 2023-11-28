@@ -2,7 +2,7 @@ import L, { LatLngExpression, PolylineOptions } from 'leaflet';
 
 export const polyline = (
   latlngs: LatLngExpression[] | LatLngExpression[][],
-  options?: PolylineOptions,
+  options: PolylineOptions,
 ) => {
-  return L.polyline(latlngs, options);
+  return L.polyline(latlngs, options).bindPopup(options.name);
 };

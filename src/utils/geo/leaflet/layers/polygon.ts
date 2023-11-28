@@ -23,9 +23,9 @@ function polylineOnAdd(layer: Polygon) {
 
 export const polygon = (
   latlngs: LatLngExpression[] | LatLngExpression[][],
-  options?: PolylineOptions,
+  options: PolylineOptions,
 ) => {
-  const r = L.polygon(latlngs, options);
+  const r = L.polygon(latlngs, options).bindPopup(options.name);
   polylineOnAdd(r);
   return r;
 };

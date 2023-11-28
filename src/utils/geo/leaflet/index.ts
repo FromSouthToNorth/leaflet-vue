@@ -1,23 +1,15 @@
-import { GeoJsonObject } from 'geojson';
-import type { LatLngBoundsExpression, Layer, MapOptions, TileLayerOptions } from 'leaflet';
+import type { LatLngBoundsExpression, MapOptions, TileLayerOptions } from 'leaflet';
 import L from 'leaflet';
 
-import {
-  basePoint,
-  layerData,
-  lineData,
-  scgmkBasePoint,
-  scgmkSafetySensor,
-  yhxmcBasePoint,
-  yhxmcData,
-} from '@/data';
+import { basePoint, layerData, yhxmcBasePoint, yhxmcData } from '@/data/data';
+import { hydrology, line, safetySensor, video, workingFace, yslBasePoint } from '@/data/ysl';
 import { behaviorHash } from '@/hooks/web/map/useHash';
-import { scgLineData } from '@/scgLineData';
 import { useMapStore } from '@/store/modules/map';
 
 import { addLayers, initLayerToAdd } from './layers';
 import { deviceMarker } from './layers/marker';
-import { imageOverlay, rectangle } from './layers/polygon';
+import { imageOverlay, polygon, rectangle } from './layers/polygon';
+import { polyline } from './layers/polyline';
 
 interface tileLayer {
   tileUrl: string;
@@ -92,29 +84,46 @@ export const createMap = (el: any, options: MapOptions) => {
 
   addLayers(markers, 'markercluster');
 
-  const line = lineData.map((e) => {
-    return addLayers(e as GeoJsonObject, 'geoJSON');
+  // const line = lineData.map((e) => {
+  //   return addLayers(e as GeoJsonObject, 'geoJSON');
+  // });
+
+  // const scgline = scgLineData.map((e) => {
+  //   return addLayers(e.geoJSON as GeoJsonObject, 'geoJSON');
+  // });
+
+  // const _scgmkMarkers: Layer[] = [];
+  // for (const _marker of scgmkSafetySensor) {
+  //   if (_marker.lat && _marker.lng) {
+  //     _scgmkMarkers.push(deviceMarker(_marker));
+  //   }
+  // }
+  // for (const _marker of scgmkBasePoint) {
+  //   if (_marker.lat && _marker.lng) {
+  //     if (_marker.lat && _marker.lng) {
+  //       _scgmkMarkers.push(deviceMarker(_marker));
+  //     }
+  //   }
+  // }
+
+  // addLayers(_scgmkMarkers, 'markercluster');
+
+  const lineLayers = line.map((e) => {
+    return polyline(e.latlngs, e);
   });
 
-  const scgline = scgLineData.map((e) => {
-    console.log(e.geoJSON);
-    return addLayers(e.geoJSON as GeoJsonObject, 'geoJSON');
+  addLayers(lineLayers);
+
+  const workingFaceLayers = workingFace.map((e) => {
+    const options = Object.assign({}, e);
+    delete options.latlngs;
+    return polygon(e.latlngs, options);
   });
+  addLayers(workingFaceLayers);
 
-  const _scgmkMarkers: Layer[] = [];
-  for (const _marker of scgmkSafetySensor) {
-    if (_marker.lat && _marker.lng) {
-      _scgmkMarkers.push(deviceMarker(_marker));
-    }
-  }
-  for (const _marker of scgmkBasePoint) {
-    if (_marker.lat && _marker.lng) {
-      if (_marker.lat && _marker.lng) {
-        _scgmkMarkers.push(deviceMarker(_marker));
-      }
-    }
-  }
-
-  addLayers(_scgmkMarkers, 'markercluster');
+  const safetySensorLayer = [...safetySensor, ...yslBasePoint, ...hydrology, ...video].map((e) => {
+    return deviceMarker(e);
+  });
+  addLayers(safetySensorLayer, 'markercluster');
   return map;
 };
