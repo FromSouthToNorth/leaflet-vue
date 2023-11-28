@@ -12,6 +12,7 @@ import {
   yhxmcData,
 } from '@/data';
 import { behaviorHash } from '@/hooks/web/map/useHash';
+import { scgLineData } from '@/scgLineData';
 import { useMapStore } from '@/store/modules/map';
 
 import { addLayers, initLayerToAdd } from './layers';
@@ -93,6 +94,11 @@ export const createMap = (el: any, options: MapOptions) => {
 
   const line = lineData.map((e) => {
     return addLayers(e as GeoJsonObject, 'geoJSON');
+  });
+
+  const scgline = scgLineData.map((e) => {
+    console.log(e.geoJSON);
+    return addLayers(e.geoJSON as GeoJsonObject, 'geoJSON');
   });
 
   const _scgmkMarkers: Layer[] = [];
