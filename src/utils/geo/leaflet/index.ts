@@ -1,7 +1,8 @@
+import { GeoJsonObject } from 'geojson';
 import type { LatLngBoundsExpression, MapOptions, TileLayerOptions } from 'leaflet';
 import L from 'leaflet';
 
-import { basePoint, layerData, yhxmcBasePoint, yhxmcData } from '@/data/data';
+import { basePoint, layerData, lineData, yhxmcBasePoint, yhxmcData } from '@/data/data';
 import { hydrology, line, safetySensor, video, workingFace, yslBasePoint } from '@/data/ysl';
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
@@ -84,9 +85,9 @@ export const createMap = (el: any, options: MapOptions) => {
 
   addLayers(markers, 'markercluster');
 
-  // const line = lineData.map((e) => {
-  //   return addLayers(e as GeoJsonObject, 'geoJSON');
-  // });
+  lineData.map((e) => {
+    return addLayers(e as GeoJsonObject, 'geoJSON');
+  });
 
   // const scgline = scgLineData.map((e) => {
   //   return addLayers(e.geoJSON as GeoJsonObject, 'geoJSON');
