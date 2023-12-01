@@ -17,9 +17,15 @@ dependencies:
   '@turf/turf':
     specifier: ^6.5.0
     version: 6.5.0
+  '@types/rbush':
+    specifier: ^3.0.3
+    version: 3.0.3
   ant-design-vue:
     specifier: ^4.0.7
     version: 4.0.7(vue@3.3.9)
+  d3-geo:
+    specifier: ^3.1.0
+    version: 3.1.0
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
@@ -35,6 +41,9 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.2)(vue@3.3.9)
+  rbush:
+    specifier: ^3.0.1
+    version: 3.0.1
   vue:
     specifier: ^3.3.9
     version: 3.3.9(typescript@5.3.2)
@@ -46,6 +55,9 @@ dependencies:
     version: 0.18.5
 
 devDependencies:
+  '@types/d3-geo':
+    specifier: ^3.1.0
+    version: 3.1.0
   '@types/geojson':
     specifier: ^7946.0.13
     version: 7946.0.13
@@ -1716,6 +1728,12 @@ packages:
       d3-voronoi: 1.1.2
     dev: false
 
+  /@types/d3-geo@3.1.0:
+    resolution: {integrity: sha512-856sckF0oP/diXtS4jNsiQw/UuK5fQG8l/a9VVLeSouf1/PPbBE1i1W852zVwKwYCBkFJJB7nCFTbk6UMEXBOQ==}
+    dependencies:
+      '@types/geojson': 7946.0.13
+    dev: true
+
   /@types/geojson@7946.0.13:
     resolution: {integrity: sha512-bmrNrgKMOhM3WsafmbGmC+6dsF2Z308vLFsQ3a/bT8X8Sv5clVYpPars/UPq+sAaJP+5OoLAYgwbkS5QEJdLUQ==}
     dev: true
@@ -1767,6 +1785,10 @@ packages:
   /@types/normalize-package-data@2.4.4:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
     dev: true
+
+  /@types/rbush@3.0.3:
+    resolution: {integrity: sha512-lX55lR0iYCgapxD3IrgujpQA1zDxwZI5qMRelKvmKAsSMplFVr7wmMpG7/6+Op2tjrgEex8o3vjg8CRDrRNYxg==}
+    dev: false
 
   /@types/semver@7.5.6:
     resolution: {integrity: sha512-dn1l8LaMea/IjDoHNd9J52uBbInB796CDffS6VdIxvqYCPSG0V0DzHp76GpaWnlhg88uYyPbXCDIowa86ybd5A==}
@@ -2492,10 +2514,24 @@ packages:
     resolution: {integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==}
     dev: false
 
+  /d3-array@3.2.4:
+    resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
+    engines: {node: '>=12'}
+    dependencies:
+      internmap: 2.0.3
+    dev: false
+
   /d3-geo@1.7.1:
     resolution: {integrity: sha512-O4AempWAr+P5qbk2bC2FuN/sDW4z+dN2wDf9QV3bxQt4M5HfOEeXLgJ/UKQW0+o1Dj8BE+L5kiDbdWUMjsmQpw==}
     dependencies:
       d3-array: 1.2.4
+    dev: false
+
+  /d3-geo@3.1.0:
+    resolution: {integrity: sha512-JEo5HxXDdDYXCaWdwLRt79y7giK8SbhZJbFWXqbRTolCHFI5jRqteLzCsq51NKbUoX0PjBVSohxrx+NoOUujYA==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-array: 3.2.4
     dev: false
 
   /d3-voronoi@1.1.2:
@@ -3489,6 +3525,11 @@ packages:
       hasown: 2.0.0
       side-channel: 1.0.4
     dev: true
+
+  /internmap@2.0.3:
+    resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
+    engines: {node: '>=12'}
+    dev: false
 
   /is-arguments@1.1.1:
     resolution: {integrity: sha512-8Q7EARjzEnKpt/PCD7e1cgUS0a6X8u5tdSiMqXhojOdoV9TsMsiO+9VLC5vAmO8N7/GmXn7yjR8qnA6bVAEzfA==}
