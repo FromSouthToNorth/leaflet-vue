@@ -8,6 +8,7 @@ import { map } from '@/hooks/web/map/useMap';
 import { isArray } from '@/utils/is';
 
 import { binClipPath } from './polygon';
+import { binOnewayPath } from './polyline';
 
 export const layerGroup = L.layerGroup();
 
@@ -30,6 +31,7 @@ export function initLayerToAdd() {
     value.addTo(_map);
   });
   _map.on('moveend', binClipPath);
+  _map.on('moveend', binOnewayPath);
 }
 
 export function addLayers(layers: Layer | Layer[] | GeoJsonObject | GeoJsonObject[], key?: string) {

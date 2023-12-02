@@ -110,6 +110,7 @@ export const createMap = (el: any, options: MapOptions) => {
   // addLayers(_scgmkMarkers, 'markercluster');
 
   const lineLayers = line.map((e) => {
+    e.oneway = true;
     return polyline(e.latlngs, e);
   });
 
