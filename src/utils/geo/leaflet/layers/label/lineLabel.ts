@@ -108,6 +108,12 @@ function getLineLabel(layer: Polyline, width: number, height: number) {
         });
       }
     }
+
+    return {
+      'font-size': height + 2,
+      lineString: lineString(sub),
+      startOffset: `${offset}%`,
+    };
     if (tryInsert(bboxes, layer.options.id, false)) {
       // accept this one
       return {

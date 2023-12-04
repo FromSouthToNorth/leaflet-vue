@@ -37,8 +37,8 @@ export function initLayerToAdd() {
   _map.on('moveend', binOnewayPath);
   _map.on('moveend', () => {
     clearRBush();
-    areaLabel();
     lineLabel();
+    areaLabel();
   });
 }
 

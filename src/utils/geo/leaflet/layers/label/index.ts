@@ -11,6 +11,7 @@ const _rskipped = new RBush();
 export function clearRBush() {
   _rdrawn.clear();
   _rskipped.clear();
+  _entitybboxes.clear();
 }
 
 export function tryInsert(bboxes: BBox[], id: string, saveSkipped: boolean) {

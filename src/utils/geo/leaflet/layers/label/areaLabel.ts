@@ -1,4 +1,4 @@
-import { Polygon } from 'leaflet';
+import { Polygon, svg } from 'leaflet';
 
 import { utilDisplayNameForPath } from '@/utils';
 
@@ -6,30 +6,57 @@ import { latLngToLayerPoint } from '../../util';
 import { layerMap } from '../index';
 import { textWidth, tryInsert } from './index';
 
+const classes: string[] = ['arealabel-halo', 'arealabel'];
+
+interface P {
+  x: string;
+  y: string;
+  height: string;
+  textAnchor: string;
+}
+
 export function areaLabel() {
   layerMap.forEach((value) => {
     value.eachLayer((layer) => {
-      if (layer instanceof Polygon && layer.options.name) {
-        drawAreaLabels(layer, 'arealabel');
-        drawAreaLabels(layer, 'arealabel-halo');
+      if (layer instanceof Polygon) {
+        drawAreaLabels(layer);
       }
     });
   });
 }
 
-export function drawAreaLabels(layer: Polygon, classes: string) {
+export function drawAreaLabels(layer: Polygon) {
+  const { id, name } = layer.options;
+  if (!name) return;
   const svg = document.querySelector('svg.leaflet-zoom-animated');
+  const width = textWidth(name, 14);
+  const p = getAreaLabel(layer, width, 14);
+  if (p) {
+    classes.forEach((c) => {
+      drawAreaLabel(layer, c, p);
+    });
+  } else {
+    const doms: Element[] = [];
+    for (const c of classes) {
+      const dom = document.querySelector(`.${c}-${id}`);
+      if (dom) {
+        doms.push(dom);
+      }
+    }
+    doms.forEach((e) => {
+      svg?.removeChild(e);
+    });
+  }
+}
 
+export function drawAreaLabel(layer: Polygon, classes: string, p: P) {
+  const svg = document.querySelector('svg.leaflet-zoom-animated');
   const { id, name } = layer.options;
   const dom = document.querySelector(`.${classes}-${id}`);
-  const height = 14;
-  if (!name) return;
-  const width = textWidth(name, height);
-  const p = getPointLabel(layer, width, height);
-  if (p && dom) {
+  if (dom) {
     dom.setAttribute('x', p.x);
     dom.setAttribute('y', p.y);
-  } else if (p && !dom) {
+  } else if (!dom) {
     const _text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     _text.setAttribute('id', `${classes}-${id}`);
     _text.setAttribute('class', `${classes} ${classes}-${id}`);
@@ -38,14 +65,10 @@ export function drawAreaLabels(layer: Polygon, classes: string) {
     const textContent = document.createTextNode(utilDisplayNameForPath(name));
     _text.appendChild(textContent);
     svg.append(_text);
-  } else if (!p && dom) {
-    svg.removeChild(dom);
   }
 }
 
-function getPointLabel(layer: Polygon, width: number, height: number) {
-  const { id } = layer.options;
-
+export function getAreaLabel(layer: Polygon, width: number, height: number) {
   const center = layer.getCenter();
   const centroid = latLngToLayerPoint(center);
   const { _northEast, _southWest } = layer.getBounds();
@@ -67,7 +90,7 @@ function getPointLabel(layer: Polygon, width: number, height: number) {
       maxY: labelY + height / 2 + padding,
     };
 
-    if (tryInsert([bbox], id, true)) {
+    if (tryInsert([bbox], layer.options.id, true)) {
       p.x = labelX;
       p.y = labelY;
       p.textAnchor = 'middle';

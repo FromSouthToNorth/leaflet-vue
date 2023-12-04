@@ -19,8 +19,7 @@ function polylineOnAdd(layer: Polygon) {
       e.sourceTarget._path.setAttribute('clip-path', `url(#${key})`);
       drawClipPath(e.sourceTarget);
     }
-    drawAreaLabels(layer, 'arealabel');
-    drawAreaLabels(layer, 'arealabel-halo');
+    drawAreaLabels(layer);
   });
 }
 
