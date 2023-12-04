@@ -3,14 +3,17 @@ import L, { LatLngExpression, LeafletEvent, Polyline, PolylineOptions } from 'le
 
 import { geoVecAdd, geoVecAngle, geoVecLength, getClipExtent, projection } from '../util';
 import { layerMap } from './index';
+import { drawLineLabels, drawLinePaths } from './label/lineLabel';
 
 function polylineOnAdd(layer: Polyline) {
   layer.on('add', (e: LeafletEvent) => {
     const { oneway, key } = e.sourceTarget.options;
     if (oneway && key) {
-      e.sourceTarget._path.setAttribute('clip-path', `url(#${key})`);
       markerSegments(e.sourceTarget, 26);
     }
+    drawLinePaths(e.sourceTarget, 'pathText');
+    drawLineLabels(e.sourceTarget, 'pathText', 'linelabel-halo');
+    drawLineLabels(e.sourceTarget, 'pathText', 'linelabel');
   });
 }
 
@@ -102,10 +105,10 @@ export function markerSegments(layer: Polyline, dt: number) {
   const svg = document.querySelector('svg.leaflet-zoom-animated');
 
   if (segments.length) {
-    for (const { id, index, d } of segments) {
+    for (const { d } of segments) {
       const _path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       _path.setAttribute('marker-mid', 'url(#oneway-marker)');
-      _path.setAttribute('class', `oneway ${id}-${index}`);
+      _path.setAttribute('class', `oneway`);
       _path.setAttribute('d', d);
       svg?.append(_path);
     }

@@ -38,5 +38,38 @@
   path.oneway {
     stroke-width: 3;
   }
+
+  path.pathText {
+    stroke-width: 14;
+    fill: none;
+  }
+
+  text.arealabel,
+  text.pointlabel,
+  text.linelabel {
+    z-index: 9999;
+    transition: opacity 100ms linear;
+    fill: #333;
+    font-size: 12px;
+    font-weight: bold;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  }
+
+  text.arealabel-halo,
+  text.pointlabel-halo,
+  text.linelabel-halo {
+    z-index: 9999;
+    transition: opacity 100ms linear;
+    stroke-width: 5px;
+    stroke: #fff;
+    opacity: 0.7;
+    fill: #333;
+    font-size: 12px;
+    font-weight: bold;
+    stroke-miterlimit: 1;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  }
   
 }

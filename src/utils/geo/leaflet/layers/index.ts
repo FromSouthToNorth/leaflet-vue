@@ -7,6 +7,9 @@ import { toRaw } from 'vue';
 import { map } from '@/hooks/web/map/useMap';
 import { isArray } from '@/utils/is';
 
+import { clearRBush } from './label';
+import { areaLabel } from './label/areaLabel';
+import { lineLabel } from './label/lineLabel';
 import { binClipPath } from './polygon';
 import { binOnewayPath } from './polyline';
 
@@ -32,6 +35,11 @@ export function initLayerToAdd() {
   });
   _map.on('moveend', binClipPath);
   _map.on('moveend', binOnewayPath);
+  _map.on('moveend', () => {
+    clearRBush();
+    areaLabel();
+    lineLabel();
+  });
 }
 
 export function addLayers(layers: Layer | Layer[] | GeoJsonObject | GeoJsonObject[], key?: string) {

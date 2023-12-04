@@ -1,5 +1,8 @@
 import type { App, Component } from 'vue';
 
+import { utilDetect } from './detect';
+import { fixRTLTextForSvg, rtlRegex } from './svgPathsRtlFIx';
+
 // https://github.com/vant-ui/vant/issues/8302
 type EventShim = {
   new (...args: any[]): {
@@ -54,4 +57,12 @@ export function utilStringQs(str: string): any {
 
     return obj;
   }, {});
+}
+
+export function utilDisplayNameForPath(name: string): string {
+  const isFirefox = utilDetect().browser.toLowerCase().includes('firefox');
+  const isNewChromium = Number(utilDetect().version.split('.')[0]) >= 96.0;
+  if (isFirefox && !isNewChromium && name && rtlRegex.test(name)) name = fixRTLTextForSvg(name);
+
+  return name;
 }

@@ -49,7 +49,7 @@ export function isObject(val: any): val is Record<any, any> {
 }
 
 // TODO 此处 isArray 存在歧义
-export function isArray(val: any): val is Array<any> {
+export function isArray(val: any): val is number[] {
   return val && Array.isArray(val);
 }
 

@@ -10,6 +10,7 @@ import L, {
 
 import { latlngToPoint } from '../util/index';
 import { layerMap } from './index';
+import { drawAreaLabels } from './label/areaLabel';
 
 function polylineOnAdd(layer: Polygon) {
   layer.on('add', (e: LeafletEvent) => {
@@ -18,6 +19,8 @@ function polylineOnAdd(layer: Polygon) {
       e.sourceTarget._path.setAttribute('clip-path', `url(#${key})`);
       drawClipPath(e.sourceTarget);
     }
+    drawAreaLabels(layer, 'arealabel');
+    drawAreaLabels(layer, 'arealabel-halo');
   });
 }
 
