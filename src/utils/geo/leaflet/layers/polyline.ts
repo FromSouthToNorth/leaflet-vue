@@ -11,9 +11,9 @@ function polylineOnAdd(layer: Polyline) {
     if (oneway && key) {
       markerSegments(e.sourceTarget, 26);
     }
-    drawLinePaths(e.sourceTarget, 'pathText');
     drawLineLabels(e.sourceTarget, 'pathText', 'linelabel-halo');
     drawLineLabels(e.sourceTarget, 'pathText', 'linelabel');
+    drawLinePaths(e.sourceTarget, 'pathText');
   });
 }
 
@@ -22,6 +22,7 @@ export const polyline = (
   options: PolylineOptions,
 ) => {
   options.key = `polyline-${options.id}`;
+  options.weight = 6;
   const line = L.polyline(latlngs, options).bindPopup(options.name);
   polylineOnAdd(line);
   return line;

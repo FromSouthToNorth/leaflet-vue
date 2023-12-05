@@ -1,5 +1,6 @@
 import 'ant-design-vue/dist/reset.css';
 import '@/design/index.less';
+import 'virtual:svg-icons-register';
 
 import { createApp } from 'vue';
 

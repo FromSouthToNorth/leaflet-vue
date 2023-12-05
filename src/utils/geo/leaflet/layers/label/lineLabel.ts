@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { Polyline } from 'leaflet';
 
 import { utilDisplayNameForPath } from '@/utils';
@@ -26,40 +27,47 @@ export function lineLabel() {
 }
 
 export function drawLineLabels(layer: Polyline, prefix: string, classes: string) {
-  const svg = document.querySelector('svg.leaflet-zoom-animated');
   const { id, name } = layer.options;
-  const dom = document.querySelector(`.${classes}-${id}`);
-  if (dom) return;
-  const _textpath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-  _textpath.setAttribute('class', `textpath`);
-  _textpath.setAttribute('startOffset', '50%');
-  _textpath.setAttribute('href', `#${prefix}-${id}`);
-  const textContent = document.createTextNode(utilDisplayNameForPath(name));
-  _textpath.appendChild(textContent);
-  const _text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  _text.setAttribute('class', `${classes}-${id} ${classes}`);
-  _text.append(_textpath);
-  svg.append(_text);
+  const svg = d3.select('svg.leaflet-zoom-animated');
+  const text = svg.selectAll(`.${classes}-${id}`).data([layer.options]);
+  text.exit().remove();
+  text
+    .enter()
+    .append('text')
+    .attr('class', `${classes}-${id} ${classes}`)
+    .append('textPath')
+    .attr('class', 'textpath');
+
+  svg
+    .selectAll(`text.${classes}-${id}`)
+    .select('.textpath')
+    .data([layer.options], (d: any) => {
+      return d.id;
+    })
+    .attr('startOffset', '50%')
+    .attr('xlink:href', `#${prefix}-${id}`)
+    .text(utilDisplayNameForPath(name));
 }
 
 export function drawLinePaths(layer: Polyline, prefix: string) {
-  const svg = document.querySelector('svg.leaflet-zoom-animated');
+  const svg = d3.select('svg.leaflet-zoom-animated');
   const { id, name } = layer.options;
-  const _id = `${prefix}-${id}`;
   const width = textWidth(name, 14);
   const p = getLineLabel(layer, width, 14);
-  const dom = document.querySelector(`#${_id}`);
-  if (p && dom) {
-    dom.setAttribute('d', p.lineString);
-  } else if (p && !dom) {
-    const _path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    _path.setAttribute('id', `${prefix}-${id}`);
-    _path.setAttribute('class', `${prefix}`);
-    _path.setAttribute('d', p.lineString);
-    svg.append(_path);
-  } else if (!p && dom) {
-    svg.removeChild(dom);
+  const path = svg.selectAll(`#${prefix}-${id}`).data([layer.options]);
+  if (!p) {
+    path.remove();
+    return;
   }
+  path.exit().remove();
+  path
+    .enter()
+    .append('path')
+    .style('stroke-width', 14)
+    .attr('id', `${prefix}-${id}`)
+    .attr('class', `${prefix}`)
+    .merge(path)
+    .attr('d', p.lineString);
 }
 
 function getLineLabel(layer: Polyline, width: number, height: number) {
@@ -109,11 +117,6 @@ function getLineLabel(layer: Polyline, width: number, height: number) {
       }
     }
 
-    return {
-      'font-size': height + 2,
-      lineString: lineString(sub),
-      startOffset: `${offset}%`,
-    };
     if (tryInsert(bboxes, layer.options.id, false)) {
       // accept this one
       return {

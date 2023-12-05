@@ -1,4 +1,6 @@
-import { Polygon, svg } from 'leaflet';
+import type { BaseType, Selection } from 'd3';
+import * as d3 from 'd3';
+import { Polygon } from 'leaflet';
 
 import { utilDisplayNameForPath } from '@/utils';
 
@@ -28,7 +30,6 @@ export function areaLabel() {
 export function drawAreaLabels(layer: Polygon) {
   const { id, name } = layer.options;
   if (!name) return;
-  const svg = document.querySelector('svg.leaflet-zoom-animated');
   const width = textWidth(name, 14);
   const p = getAreaLabel(layer, width, 14);
   if (p) {
@@ -36,35 +37,34 @@ export function drawAreaLabels(layer: Polygon) {
       drawAreaLabel(layer, c, p);
     });
   } else {
-    const doms: Element[] = [];
+    const doms: Selection<BaseType, unknown, HTMLElement, any>[] = [];
     for (const c of classes) {
-      const dom = document.querySelector(`.${c}-${id}`);
+      const dom = d3.select(`.${c}-${id}`);
       if (dom) {
         doms.push(dom);
       }
     }
     doms.forEach((e) => {
-      svg?.removeChild(e);
+      e?.remove();
     });
   }
 }
 
 export function drawAreaLabel(layer: Polygon, classes: string, p: P) {
-  const svg = document.querySelector('svg.leaflet-zoom-animated');
+  const svg = d3.select('svg.leaflet-zoom-animated');
   const { id, name } = layer.options;
-  const dom = document.querySelector(`.${classes}-${id}`);
-  if (dom) {
-    dom.setAttribute('x', p.x);
-    dom.setAttribute('y', p.y);
-  } else if (!dom) {
-    const _text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    _text.setAttribute('id', `${classes}-${id}`);
-    _text.setAttribute('class', `${classes} ${classes}-${id}`);
-    _text.setAttribute('x', p.x);
-    _text.setAttribute('y', p.y);
-    const textContent = document.createTextNode(utilDisplayNameForPath(name));
-    _text.appendChild(textContent);
-    svg.append(_text);
+  const dom = d3.select(`.${classes}-${id}`);
+  if (!dom.empty()) {
+    dom.attr('x', p.x);
+    dom.attr('y', p.y);
+  } else {
+    svg
+      .append('text')
+      .attr('id', `${classes}-${id}`)
+      .attr('class', `${classes} ${classes}-${id}`)
+      .attr('x', p.x)
+      .attr('y', p.y)
+      .text(utilDisplayNameForPath(name));
   }
 }
 
