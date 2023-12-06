@@ -1,13 +1,14 @@
 import 'leaflet.markercluster';
 
+import * as d3 from 'd3';
 import type { GeoJsonObject } from 'geojson';
-import L, { FeatureGroup, GeoJSON, Layer, LayerGroup } from 'leaflet';
-import { toRaw } from 'vue';
+import L, { FeatureGroup, GeoJSON, Layer, LayerGroup, SVG } from 'leaflet';
+import { computed, ref, toRaw } from 'vue';
 
 import { map } from '@/hooks/web/map/useMap';
 import { isArray } from '@/utils/is';
 
-import { clearRBush } from './label';
+import { clearRBush, initLabel } from './label';
 import { areaLabel } from './label/areaLabel';
 import { lineLabel } from './label/lineLabel';
 import { binClipPath } from './polygon';
@@ -28,8 +29,19 @@ layerMap.set('featureGroup', featureGroup);
 layerMap.set('geoJSON', geoJSON);
 layerMap.set('markercluster', markercluster);
 
+const basicsSvg = ref<SVG>();
+
+export const basicsSvgLayers = computed(() => basicsSvg);
+
 export function initLayerToAdd() {
   const _map = toRaw(map.value);
+  basicsSvg.value = L.svg({ padding: 0.1 }).addTo(_map);
+
+  d3.select(_map.getPanes().overlayPane)
+    .select('svg')
+    .attr('class', 'layers')
+    .attr('pointer-events', 'auto');
+  initLabel();
   layerMap.forEach((value) => {
     value.addTo(_map);
   });
@@ -42,7 +54,10 @@ export function initLayerToAdd() {
   });
 }
 
-export function addLayers(layers: Layer | Layer[] | GeoJsonObject | GeoJsonObject[], key?: string) {
+export function addLayers(
+  layers: Layer | Layer[] | GeoJsonObject | GeoJsonObject[] | unknown,
+  key?: string,
+) {
   key = key ? key : 'featureGroup';
   const group = layerMap.get(key);
   if (!group) console.error(`layerMap do not ${key} Layer`);

@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { Polyline } from 'leaflet';
+import { toRaw, unref } from 'vue';
 
 import { utilDisplayNameForPath } from '@/utils';
 
@@ -12,24 +13,36 @@ import {
   latlng,
   latLngToLayerPoint,
 } from '../../util';
-import { layerMap } from '../index';
+import { basicsSvgLayers, layerMap } from '../index';
 import { reverse, subpath, textWidth, tryInsert } from './index';
 
+const prefix = 'pathText';
+
+const classes: string[][] = [
+  ['linelabel-halo', '.labels-group.halo'],
+  ['linelabel', '.labels-group.label'],
+];
+
+export function lineLabels(layer: Polyline) {
+  classes.forEach((e) => {
+    drawLineLabels(d3.select(e[1]), layer, prefix, e[0]);
+  });
+  drawLinePaths(d3.select('svg.layers'), layer, 'pathText');
+}
+
 export function lineLabel() {
-  const prefix = 'pathText';
   layerMap.forEach((value) => {
     value.eachLayer((layer) => {
       if (layer instanceof Polyline && layer.options.name) {
-        drawLinePaths(layer, `${prefix}`);
+        drawLinePaths(d3.select('svg.layers'), layer, `${prefix}`);
       }
     });
   });
 }
 
-export function drawLineLabels(layer: Polyline, prefix: string, classes: string) {
+export function drawLineLabels(selection: any, layer: Polyline, prefix: string, classes: string) {
   const { id, name } = layer.options;
-  const svg = d3.select('svg.leaflet-zoom-animated');
-  const text = svg.selectAll(`.${classes}-${id}`).data([layer.options]);
+  const text = selection.selectAll(`.${classes}-${id}`).data([layer.options]);
   text.exit().remove();
   text
     .enter()
@@ -38,7 +51,7 @@ export function drawLineLabels(layer: Polyline, prefix: string, classes: string)
     .append('textPath')
     .attr('class', 'textpath');
 
-  svg
+  selection
     .selectAll(`text.${classes}-${id}`)
     .select('.textpath')
     .data([layer.options], (d: any) => {
@@ -49,12 +62,11 @@ export function drawLineLabels(layer: Polyline, prefix: string, classes: string)
     .text(utilDisplayNameForPath(name));
 }
 
-export function drawLinePaths(layer: Polyline, prefix: string) {
-  const svg = d3.select('svg.leaflet-zoom-animated');
+export function drawLinePaths(selection: any, layer: Polyline, prefix: string) {
   const { id, name } = layer.options;
   const width = textWidth(name, 14);
   const p = getLineLabel(layer, width, 14);
-  const path = svg.selectAll(`#${prefix}-${id}`).data([layer.options]);
+  const path = selection.selectAll(`#${prefix}-${id}`).data([layer.options]);
   if (!p) {
     path.remove();
     return;

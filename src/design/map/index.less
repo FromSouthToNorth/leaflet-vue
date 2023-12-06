@@ -35,6 +35,10 @@
     background-color: #2f54eb;
   }
 
+  .layers {
+    z-index: 99999;
+  }
+
   path.oneway {
     stroke-width: 4;
   }
@@ -74,6 +78,24 @@
     stroke-miterlimit: 1;
     dominant-baseline: middle;
     text-anchor: middle;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+  .icon.areaicon-halo {
+    stroke-width: 2px;
+    stroke: #999;
+    opacity: 0.6;
+    stroke-miterlimit: 1;
+  }
+
+  .icon.areaicon {
+    opacity: 0.8;
+    fill: #222;
   }
   
 }

@@ -119,6 +119,7 @@ export const createMap = (el: any, options: MapOptions) => {
   const workingFaceLayers = workingFace.map((e) => {
     const options = Object.assign({}, e);
     delete options.latlngs;
+    options.icon = 'icon-mine';
     return polygon(e.latlngs, options);
   });
   addLayers(workingFaceLayers);

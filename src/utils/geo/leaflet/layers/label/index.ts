@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import type { BBox } from 'rbush';
 import RBush from 'rbush';
 
@@ -12,6 +13,19 @@ export function clearRBush() {
   _rdrawn.clear();
   _rskipped.clear();
   _entitybboxes.clear();
+}
+
+export function initLabel() {
+  const svg = d3.select('svg.layers');
+
+  svg
+    .selectAll('.labels')
+    .data(['halo', 'label'])
+    .enter()
+    .append('g')
+    .attr('class', function (d: string) {
+      return `labels-group ${d}`;
+    });
 }
 
 export function tryInsert(bboxes: BBox[], id: string, saveSkipped: boolean) {

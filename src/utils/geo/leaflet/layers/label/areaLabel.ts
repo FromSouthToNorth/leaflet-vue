@@ -6,9 +6,13 @@ import { utilDisplayNameForPath } from '@/utils';
 
 import { latLngToLayerPoint } from '../../util';
 import { layerMap } from '../index';
+import { drawAreaIcons } from './iconLabel';
 import { textWidth, tryInsert } from './index';
 
-const classes: string[] = ['arealabel-halo', 'arealabel'];
+const classes: string[][] = [
+  ['arealabel-halo', 'areaicon-halo'],
+  ['arealabel', 'areaicon'],
+];
 
 interface P {
   x: string;
@@ -34,19 +38,14 @@ export function drawAreaLabels(layer: Polygon) {
   const p = getAreaLabel(layer, width, 14);
   if (p) {
     classes.forEach((c) => {
-      drawAreaLabel(layer, c, p);
+      drawAreaLabel(layer, c[0], p);
+      drawAreaIcons(p, c[1]);
     });
   } else {
-    const doms: Selection<BaseType, unknown, HTMLElement, any>[] = [];
     for (const c of classes) {
-      const dom = d3.select(`.${c}-${id}`);
-      if (dom) {
-        doms.push(dom);
-      }
+      d3.selectAll(`.${c[0]}-${id}`).remove();
+      d3.selectAll(`.${c[1]}-${id}`).remove();
     }
-    doms.forEach((e) => {
-      e?.remove();
-    });
   }
 }
 
@@ -76,26 +75,59 @@ export function getAreaLabel(layer: Polygon, width: number, height: number) {
   const southWest = latLngToLayerPoint(_southWest);
   const areaWidth = northEast.x - southWest.x;
   if (Number.isNaN(center.lat) || areaWidth < 20) return;
+  const p: any = {};
 
-  if (width && areaWidth >= width + 20) {
-    const yOffset = 0;
-    const padding = 2;
-    const p: any = {};
-    const labelX = centroid.x;
-    const labelY = centroid.y + yOffset;
-    const bbox = {
-      minX: labelX - width / 2 - padding,
-      minY: labelY - height / 2 - padding,
-      maxX: labelX + width / 2 + padding,
-      maxY: labelY + height / 2 + padding,
-    };
-
-    if (tryInsert([bbox], layer.options.id, true)) {
-      p.x = labelX;
-      p.y = labelY;
-      p.textAnchor = 'middle';
-      p.height = height;
+  const iconSize = 17;
+  const padding = 2;
+  const { id, icon } = layer.options;
+  if (icon) {
+    if (addIcon() && addLabel(iconSize + padding)) {
+      p.id = id;
+      p.icon = icon;
       return p;
     }
+  } else {
+    if (addLabel(0)) {
+      return p;
+    }
+  }
+
+  function addIcon() {
+    const iconX = centroid.x - iconSize / 2;
+    const iconY = centroid.y - iconSize / 2;
+    const bbox = {
+      minX: iconX,
+      minY: iconY,
+      maxX: iconX + iconSize,
+      maxY: iconY + iconSize,
+    };
+
+    if (tryInsert([bbox], id + 'I', true)) {
+      p.transform = 'translate(' + iconX + ',' + iconY + ')';
+      return true;
+    }
+    return false;
+  }
+
+  function addLabel(yOffset: number) {
+    if (width && areaWidth >= width + 20) {
+      const labelX = centroid.x;
+      const labelY = centroid.y + yOffset;
+      const bbox = {
+        minX: labelX - width / 2 - padding,
+        minY: labelY - height / 2 - padding,
+        maxX: labelX + width / 2 + padding,
+        maxY: labelY + height / 2 + padding,
+      };
+
+      if (tryInsert([bbox], id, true)) {
+        p.x = labelX;
+        p.y = labelY;
+        p.textAnchor = 'middle';
+        p.height = height;
+        return true;
+      }
+    }
+    return false;
   }
 }

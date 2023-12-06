@@ -1,9 +1,10 @@
+import * as d3 from 'd3';
 import { geoIdentity, geoStream } from 'd3-geo';
 import L, { LatLngExpression, LeafletEvent, Polyline, PolylineOptions } from 'leaflet';
 
 import { geoVecAdd, geoVecAngle, geoVecLength, getClipExtent, projection } from '../util';
 import { layerMap } from './index';
-import { drawLineLabels, drawLinePaths } from './label/lineLabel';
+import { lineLabels } from './label/lineLabel';
 
 function polylineOnAdd(layer: Polyline) {
   layer.on('add', (e: LeafletEvent) => {
@@ -11,9 +12,7 @@ function polylineOnAdd(layer: Polyline) {
     if (oneway && key) {
       markerSegments(e.sourceTarget, 26);
     }
-    drawLineLabels(e.sourceTarget, 'pathText', 'linelabel-halo');
-    drawLineLabels(e.sourceTarget, 'pathText', 'linelabel');
-    drawLinePaths(e.sourceTarget, 'pathText');
+    lineLabels(layer);
   });
 }
 
@@ -107,6 +106,8 @@ export function markerSegments(layer: Polyline, dt: number) {
 
   if (segments.length) {
     for (const { d } of segments) {
+      const layers = d3.select('.leyares');
+      console.log(layers);
       const _path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       _path.setAttribute('marker-mid', 'url(#oneway-marker)');
       _path.setAttribute('class', `oneway`);
