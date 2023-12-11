@@ -37,10 +37,7 @@ export function initLayerToAdd() {
   const _map = toRaw(map.value);
   basicsSvg.value = L.svg({ padding: 0.1 }).addTo(_map);
 
-  d3.select(_map.getPanes().overlayPane)
-    .select('svg')
-    .attr('class', 'layers')
-    .attr('pointer-events', 'auto');
+  d3.select(_map.getPanes().overlayPane).select('svg').attr('class', 'layers');
   initLabel();
   layerMap.forEach((value) => {
     value.addTo(_map);
