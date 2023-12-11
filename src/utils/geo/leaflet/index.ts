@@ -1,8 +1,10 @@
+import * as turf from '@turf/turf';
 import { GeoJsonObject } from 'geojson';
 import type { LatLngBoundsExpression, MapOptions, TileLayerOptions } from 'leaflet';
 import L from 'leaflet';
 
 import { basePoint, layerData, lineData, yhxmcBasePoint, yhxmcData } from '@/data/data';
+import { lmxmcData } from '@/data/lmymc';
 import { hydrology, line, safetySensor, video, workingFace, yslBasePoint } from '@/data/ysl';
 import { behaviorHash } from '@/hooks/web/map/useHash';
 import { useMapStore } from '@/store/modules/map';
@@ -128,5 +130,22 @@ export const createMap = (el: any, options: MapOptions) => {
     return deviceMarker(e);
   });
   addLayers(safetySensorLayer, 'markercluster');
+
+  const points = lmxmcData.map((e) => {
+    return turf.point([e.lng, e.lat]);
+  });
+  console.log(points);
+  // addLayers(points, 'geoJSON');
+
+  // 39.39194/107.06446
+  const newPoints = points.map((e) => {
+    const options = { pivot: [107.06446, 39.39194] };
+    const rotatedPoly = turf.transformRotate(e, 0, options);
+    return rotatedPoly;
+  });
+  console.log(newPoints);
+
+  addLayers(newPoints, 'geoJSON');
+
   return map;
 };

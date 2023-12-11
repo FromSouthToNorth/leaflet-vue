@@ -42,24 +42,18 @@ export function lineLabel() {
 
 export function drawLineLabels(selection: any, layer: Polyline, prefix: string, classes: string) {
   const { id, name } = layer.options;
-  const text = selection.selectAll(`.${classes}-${id}`).data([layer.options]);
-  text.exit().remove();
-  text
-    .enter()
-    .append('text')
-    .attr('class', `${classes}-${id} ${classes}`)
-    .append('textPath')
-    .attr('class', 'textpath');
-
-  selection
-    .selectAll(`text.${classes}-${id}`)
-    .select('.textpath')
-    .data([layer.options], (d: any) => {
-      return d.id;
-    })
-    .attr('startOffset', '50%')
-    .attr('xlink:href', `#${prefix}-${id}`)
-    .text(utilDisplayNameForPath(name));
+  const text = d3.select(`.${classes}-${id}`);
+  if (!text.empty()) return;
+  else {
+    selection
+      .append('text')
+      .attr('class', `${classes}-${id} ${classes}`)
+      .append('textPath')
+      .attr('class', 'textpath')
+      .attr('startOffset', '50%')
+      .attr('xlink:href', `#${prefix}-${id}`)
+      .text(utilDisplayNameForPath(name));
+  }
 }
 
 export function drawLinePaths(selection: any, layer: Polyline, prefix: string) {
@@ -69,17 +63,17 @@ export function drawLinePaths(selection: any, layer: Polyline, prefix: string) {
   const path = selection.selectAll(`#${prefix}-${id}`).data([layer.options]);
   if (!p) {
     path.remove();
-    return;
+  } else {
+    path.exit().remove();
+    path
+      .enter()
+      .append('path')
+      .style('stroke-width', 14)
+      .attr('id', `${prefix}-${id}`)
+      .attr('class', `${prefix}`)
+      .merge(path)
+      .attr('d', p.lineString);
   }
-  path.exit().remove();
-  path
-    .enter()
-    .append('path')
-    .style('stroke-width', 14)
-    .attr('id', `${prefix}-${id}`)
-    .attr('class', `${prefix}`)
-    .merge(path)
-    .attr('d', p.lineString);
 }
 
 function getLineLabel(layer: Polyline, width: number, height: number) {
