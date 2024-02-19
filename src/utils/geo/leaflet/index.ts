@@ -140,12 +140,52 @@ export const createMap = (el: any, options: MapOptions) => {
   // 39.39194/107.06446
   const newPoints = points.map((e) => {
     const options = { pivot: [107.06446, 39.39194] };
-    const rotatedPoly = turf.transformRotate(e, 0, options);
+    const rotatedPoly = turf.transformRotate(e, 8, options);
     return rotatedPoly;
   });
   console.log(newPoints);
 
   addLayers(newPoints, 'geoJSON');
 
+  const obj = {
+    name: '小小的也很可爱',
+    age: 18,
+  };
+
+  const url = '/BwGISOneMap/index?name=${name}&age=${age}&id=${id}';
+  const href = new URLSearchParams(url);
+
+  Object.keys(obj).forEach((key) => {
+    href.set(key, obj[key]);
+  });
+  console.log(href);
+
+  const url2 = '/BwGISOneMap/index?#{name}&#{age}&#{id}&exs=女';
+
+  const match = url2.replace(/^.*\?/, '');
+  const newUrl = url2.match(/^.*\?/)[0];
+  const params: string[] = [];
+  match.split('&').forEach((param) => {
+    console.log(param);
+    const p = param.match(/#\{([^}]+)\}/);
+    if (p && Array.isArray(p) && p.length > 0 && Object.hasOwnProperty.call(obj, p[1])) {
+      params.push(`${p[1]}=${obj[p[1]]}`);
+    } else {
+      params.push(param);
+    }
+  });
+
+  console.log(params);
+
+  console.log(newUrl + params.join('&'));
+
+  const numDays = (y, m) => {
+    const isLeapYear = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    return [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m];
+  };
+
+  const date = new Date('2024-1');
+  const day = numDays(date.getFullYear(), date.getMonth());
+  console.log(day);
   return map;
 };
